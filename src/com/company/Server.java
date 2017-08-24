@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,16 +27,22 @@ public class Server {
 
             while (true) {
                 Socket socket = server.accept();
-                System.out.println("ждем коннекта");
+                System.out.println("ждем коннекта от" + socket.getInetAddress());
                 Connection con = new Connection(socket);
                 connections.add(con);
                 con.start();
-                System.out.println("запустили коннект");
+                System.out.println("запустили коннект с"+ socket.getInetAddress());
             }
-        } catch (IOException e) {
+
+        }
+
+
+        catch (IOException e) {
             e.printStackTrace();
 
-        } finally {
+        }
+
+        finally {
             closeAll();
         }
     }
@@ -112,7 +119,12 @@ public class Server {
                 }
 
 
-            } catch (IOException e) {
+            }
+            catch (SocketException e){
+                System.out.println("Клиент отключился");
+            }
+
+            catch (IOException e) {
                 e.printStackTrace();
 
             } finally {
